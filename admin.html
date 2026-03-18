@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ADMIN — HIYANSH TECH PARTY</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --neon-blue:#00d4ff;--neon-bright:#00f0ff;--neon-dim:#0088bb;
+    --bg-dark:#020814;--bg-card:#040d1a;--bg-card2:#050f20;--bg-card3:#030b18;
+    --border:rgba(0,212,255,0.2);--border-bright:rgba(0,212,255,0.5);
+    --text-main:#e0f4ff;--text-dim:#7ab8cc;
+    --glow:0 0 20px rgba(0,212,255,0.35),0 0 40px rgba(0,212,255,0.12);
+    --glow-strong:0 0 10px #00d4ff,0 0 30px rgba(0,212,255,0.5);
+    --red:#ff3355;--green:#00ff88;--gold:#ffd700;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{height:100%;}
+  body{background:var(--bg-dark);color:var(--text-main);font-family:'Rajdhani',sans-serif;font-size:16px;overflow-x:hidden;cursor:crosshair;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;z-index:0;}
+
+  .topbar{position:sticky;top:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:14px 32px;background:rgba(2,8,20,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);}
+  .topbar-logo{font-family:'Orbitron',monospace;font-weight:900;font-size:14px;letter-spacing:3px;color:var(--red);text-transform:uppercase;}
+  .topbar-logo span{color:var(--neon-blue);}
+  .topbar-right{display:flex;align-items:center;gap:20px;}
+  .topbar-status{display:flex;align-items:center;gap:8px;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--text-dim);}
+  .status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse-dot 1.5s infinite;}
+  @keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:0.3;}}
+  .party-link{font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--neon-blue);text-decoration:none;border:1px solid var(--border);padding:6px 12px;transition:all 0.2s;}
+  .party-link:hover{border-color:var(--neon-blue);box-shadow:var(--glow);}
+
+  .layout{display:grid;grid-template-columns:1fr 380px;gap:0;min-height:calc(100vh - 53px);position:relative;z-index:1;}
+
+  .left{padding:36px 32px;border-right:1px solid var(--border);}
+  .panel-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--neon-blue);text-transform:uppercase;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  .panel-label::before{content:'';width:24px;height:1px;background:var(--neon-blue);}
+  .panel-title{font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;letter-spacing:2px;color:#fff;margin-bottom:28px;text-transform:uppercase;text-shadow:var(--glow-strong);}
+
+  .lb-main{background:var(--bg-card);border:1px solid var(--border);overflow:hidden;}
+  .lb-header{background:rgba(0,212,255,0.06);border-bottom:1px solid var(--border);padding:14px 24px;display:grid;grid-template-columns:60px 1fr 100px;gap:12px;font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--neon-blue);text-transform:uppercase;}
+  .lb-row{padding:16px 24px;display:grid;grid-template-columns:60px 1fr 100px;gap:12px;align-items:center;border-bottom:1px solid rgba(0,212,255,0.06);transition:background 0.2s;font-family:'Rajdhani',sans-serif;font-size:1.05rem;font-weight:600;}
+  .lb-row:hover{background:rgba(0,212,255,0.04);}
+  .lb-row:last-child{border-bottom:none;}
+  .lb-row.rank-1{background:rgba(255,215,0,0.06);}
+  .lb-row.rank-2{background:rgba(192,192,192,0.04);}
+  .lb-row.rank-3{background:rgba(205,127,50,0.04);}
+  .rank-badge{font-family:'Orbitron',monospace;font-size:0.95rem;font-weight:700;text-align:center;}
+  .rank-1 .rank-badge{color:#ffd700;text-shadow:0 0 10px rgba(255,215,0,0.5);}
+  .rank-2 .rank-badge{color:#c0c0c0;}
+  .rank-3 .rank-badge{color:#cd7f32;}
+  .player-name{color:var(--text-main);}
+  .player-pts{font-family:'Orbitron',monospace;font-size:0.9rem;font-weight:700;color:var(--neon-blue);text-align:right;}
+  .pts-bar-wrap{width:100%;height:2px;background:rgba(0,212,255,0.1);margin-top:5px;grid-column:2/4;}
+  .pts-bar{height:100%;background:linear-gradient(90deg,var(--neon-blue),var(--neon-bright));box-shadow:0 0 6px var(--neon-blue);}
+  .empty-msg{padding:40px;text-align:center;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;color:var(--text-dim);}
+
+  .quick-award{margin-top:24px;}
+  .qa-title{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--text-dim);text-transform:uppercase;margin-bottom:14px;}
+  .qa-player-select{width:100%;background:rgba(0,212,255,0.05);border:1px solid var(--border);color:var(--text-main);padding:12px 16px;font-family:'Share Tech Mono',monospace;font-size:12px;outline:none;cursor:crosshair;margin-bottom:12px;transition:border-color 0.2s;}
+  .qa-player-select:focus{border-color:var(--neon-blue);}
+  .qa-player-select option{background:#050f20;}
+  .qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .qa-btn{background:var(--bg-card2);border:1px solid var(--border);color:var(--text-main);padding:14px 8px;font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:1px;cursor:crosshair;transition:all 0.2s;text-align:center;line-height:1.3;}
+  .qa-btn:hover{border-color:var(--neon-blue);color:var(--neon-blue);box-shadow:var(--glow);transform:translateY(-2px);}
+  .qa-btn.minus{border-color:rgba(255,51,85,0.3);color:#ff8899;}
+  .qa-btn.minus:hover{border-color:var(--red);color:var(--red);box-shadow:0 0 16px rgba(255,51,85,0.3);}
+  .qa-btn .pts-val{font-size:1.4rem;display:block;margin-bottom:2px;}
+  .qa-btn .pts-desc{font-size:8px;letter-spacing:1px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;}
+
+  .right{padding:36px 28px;background:var(--bg-card3);display:flex;flex-direction:column;gap:24px;}
+  .admin-block{background:var(--bg-card);border:1px solid var(--border);padding:24px;}
+  .admin-block-title{font-family:'Orbitron',monospace;font-size:11px;font-weight:700;letter-spacing:3px;color:var(--neon-blue);text-transform:uppercase;margin-bottom:18px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+
+  .field-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--text-dim);text-transform:uppercase;margin-bottom:6px;}
+  .field-row{display:flex;gap:8px;margin-bottom:14px;}
+  .field-row:last-child{margin-bottom:0;}
+
+  input.f{flex:1;background:rgba(0,212,255,0.04);border:1px solid var(--border);color:var(--text-main);padding:11px 14px;font-family:'Share Tech Mono',monospace;font-size:12px;outline:none;transition:border-color 0.2s;}
+  input.f:focus{border-color:var(--neon-blue);box-shadow:0 0 10px rgba(0,212,255,0.12);}
+  input.f::placeholder{color:rgba(122,184,204,0.35);}
+  input.f.small{width:80px;flex:none;text-align:center;}
+
+  .btn{background:transparent;border:1px solid var(--neon-blue);color:var(--neon-blue);padding:11px 18px;font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:crosshair;transition:all 0.2s;white-space:nowrap;}
+  .btn:hover{background:var(--neon-blue);color:#000;box-shadow:var(--glow);}
+  .btn.full{width:100%;text-align:center;}
+  .btn.danger{border-color:var(--red);color:var(--red);}
+  .btn.danger:hover{background:var(--red);color:#fff;box-shadow:0 0 20px rgba(255,51,85,0.3);}
+  .btn.warn{border-color:#ffaa00;color:#ffaa00;}
+  .btn.warn:hover{background:#ffaa00;color:#000;}
+
+  select.f{flex:1;background:rgba(0,212,255,0.04);border:1px solid var(--border);color:var(--text-main);padding:11px 14px;font-family:'Share Tech Mono',monospace;font-size:12px;outline:none;cursor:crosshair;}
+  select.f option{background:#050f20;}
+  select.f:focus{border-color:var(--neon-blue);}
+
+  .player-list{display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;}
+  .player-list::-webkit-scrollbar{width:4px;}
+  .player-list::-webkit-scrollbar-thumb{background:var(--neon-dim);border-radius:2px;}
+  .player-chip{display:flex;align-items:center;justify-content:space-between;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.1);padding:10px 14px;transition:border-color 0.2s;}
+  .player-chip:hover{border-color:rgba(0,212,255,0.3);}
+  .chip-name{font-family:'Rajdhani',sans-serif;font-size:1rem;font-weight:600;}
+  .chip-pts{font-family:'Orbitron',monospace;font-size:0.85rem;color:var(--neon-blue);}
+  .chip-del{background:none;border:none;color:rgba(255,51,85,0.5);font-size:14px;cursor:crosshair;transition:color 0.2s;padding:0 4px;}
+  .chip-del:hover{color:var(--red);}
+
+  .toast{position:fixed;bottom:28px;right:28px;background:var(--bg-card);border:1px solid var(--neon-blue);box-shadow:var(--glow);color:var(--neon-bright);font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:2px;padding:13px 20px;z-index:9999;transform:translateY(100px);opacity:0;transition:all 0.3s;max-width:300px;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .toast.err{border-color:var(--red);color:var(--red);}
+
+  .log{max-height:160px;overflow-y:auto;display:flex;flex-direction:column;gap:4px;}
+  .log::-webkit-scrollbar{width:4px;}
+  .log::-webkit-scrollbar-thumb{background:var(--neon-dim);}
+  .log-item{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:1px;color:var(--text-dim);padding:5px 8px;background:rgba(0,212,255,0.03);border-left:2px solid rgba(0,212,255,0.2);}
+  .log-item.pos{border-left-color:var(--green);color:#aaffcc;}
+  .log-item.neg{border-left-color:var(--red);color:#ffaaaa;}
+
+  @media(max-width:900px){
+    .layout{grid-template-columns:1fr;}
+    .right{border-top:1px solid var(--border);}
+    .left{border-right:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">🔐 <span>ADMIN</span> — HIYANSH TECH PARTY</div>
+  <div class="topbar-right">
+    <a class="party-link" href="/" target="_blank">↗ PARTY SITE</a>
+    <div class="topbar-status">
+      <div class="status-dot"></div>
+      LIVE SYNC ON
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- LEFT: LIVE BOARD -->
+  <div class="left">
+    <div class="panel-label">// LIVE PREVIEW</div>
+    <div class="panel-title">Tech Champion 🏆</div>
+
+    <div class="lb-main">
+      <div class="lb-header"><span>Rank</span><span>Player</span><span style="text-align:right;">Points</span></div>
+      <div id="lb-body"></div>
+    </div>
+
+    <div class="quick-award">
+      <div class="qa-title">// Quick Award Points</div>
+      <select class="qa-player-select" id="qa-select"></select>
+      <div class="qa-grid">
+        <button class="qa-btn" onclick="quickAward(10)">
+          <span class="pts-val">+10</span>
+          <span class="pts-desc">🏆 TOURNAMENT<br>WIN</span>
+        </button>
+        <button class="qa-btn" onclick="quickAward(5)">
+          <span class="pts-val">+5</span>
+          <span class="pts-desc">🥈 SECOND<br>PLACE</span>
+        </button>
+        <button class="qa-btn" onclick="quickAward(3)">
+          <span class="pts-val">+3</span>
+          <span class="pts-desc">⚡ MINI<br>CHALLENGE</span>
+        </button>
+        <button class="qa-btn" onclick="quickAward(2)">
+          <span class="pts-val">+2</span>
+          <span class="pts-desc">😂 FUNNY<br>CHALLENGE</span>
+        </button>
+        <button class="qa-btn" onclick="quickAward(1)">
+          <span class="pts-val">+1</span>
+          <span class="pts-desc">BONUS<br>POINT</span>
+        </button>
+        <button class="qa-btn minus" onclick="quickAward(-1)">
+          <span class="pts-val">-1</span>
+          <span class="pts-desc">DEDUCT<br>POINT</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT: CONTROLS -->
+  <div class="right">
+
+    <div class="admin-block">
+      <div class="admin-block-title">+ Add New Player</div>
+      <div class="field-label">Player Name</div>
+      <div class="field-row">
+        <input class="f" id="new-name" type="text" placeholder="ENTER NAME" />
+        <input class="f small" id="new-pts" type="number" placeholder="0" min="0" value="0" />
+        <button class="btn" onclick="addPlayer()">ADD</button>
+      </div>
+    </div>
+
+    <div class="admin-block">
+      <div class="admin-block-title">✎ Set Exact Score</div>
+      <div class="field-label">Select Player</div>
+      <div class="field-row"><select class="f" id="set-player"></select></div>
+      <div class="field-label">New Points Total</div>
+      <div class="field-row">
+        <input class="f" id="set-pts" type="number" placeholder="0" min="0" />
+        <button class="btn" onclick="setPoints()">SET</button>
+      </div>
+    </div>
+
+    <div class="admin-block">
+      <div class="admin-block-title">👥 All Players</div>
+      <div class="player-list" id="player-list"></div>
+      <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button class="btn warn full" onclick="resetAll()">⚠ RESET ALL</button>
+        <button class="btn danger full" onclick="clearAll()">🗑 CLEAR ALL</button>
+      </div>
+    </div>
+
+    <div class="admin-block">
+      <div class="admin-block-title">📋 Activity Log</div>
+      <div class="log" id="log"></div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const rankSymbols = {1:'🥇',2:'🥈',3:'🥉'};
+  let logs = [];
+  let cachedPlayers = [];
+
+  /* ─── API ─── */
+  async function getPlayers() {
+    try {
+      const r = await fetch('/api/players');
+      cachedPlayers = await r.json();
+      return cachedPlayers;
+    } catch(e) { return cachedPlayers; }
+  }
+
+  async function savePlayers(players) {
+    try {
+      await fetch('/api/players', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(players)
+      });
+      cachedPlayers = players;
+    } catch(e) { toast('⚠ Save failed — check server','err'); }
+  }
+
+  /* ─── RENDER ─── */
+  async function render() {
+    const players = await getPlayers();
+    const sorted  = [...players].sort((a,b)=>b.pts-a.pts);
+    const top     = Math.max(...sorted.map(p=>p.pts),1);
+
+    /* Board */
+    const body = document.getElementById('lb-body');
+    body.innerHTML = '';
+    if (!sorted.length) {
+      body.innerHTML = '<div class="empty-msg">NO PLAYERS YET — ADD SOME →</div>';
+    } else {
+      sorted.forEach((player,i) => {
+        const rank=i+1, pct=Math.round((player.pts/top)*100);
+        const row=document.createElement('div');
+        row.className='lb-row'+(rank<=3?` rank-${rank}`:'');
+        row.innerHTML=`<div class="rank-badge">${rankSymbols[rank]||`#${rank}`}</div><div><div class="player-name">${player.name}</div><div class="pts-bar-wrap"><div class="pts-bar" style="width:${pct}%"></div></div></div><div class="player-pts">${player.pts} PTS</div>`;
+        body.appendChild(row);
+      });
+    }
+
+    /* Selects */
+    const qa=document.getElementById('qa-select'), sp=document.getElementById('set-player');
+    const prevQa=qa.value, prevSp=sp.value;
+    qa.innerHTML=''; sp.innerHTML='';
+    if (!sorted.length) {
+      qa.innerHTML='<option value="">— No players yet —</option>';
+      sp.innerHTML='<option value="">— No players yet —</option>';
+    } else {
+      sorted.forEach((p,i) => {
+        const rank=i+1;
+        const txt=`${rankSymbols[rank]||'#'+(rank)} ${p.name} (${p.pts} pts)`;
+        const o1=new Option(txt,p.name); const o2=new Option(txt,p.name);
+        qa.appendChild(o1); sp.appendChild(o2);
+      });
+      if (sorted.find(p=>p.name===prevQa)) qa.value=prevQa;
+      if (sorted.find(p=>p.name===prevSp)) sp.value=prevSp;
+    }
+
+    /* Chips */
+    const list=document.getElementById('player-list');
+    list.innerHTML='';
+    if (!players.length) {
+      list.innerHTML='<div class="empty-msg" style="padding:16px 0;">No players added yet.</div>';
+    } else {
+      [...players].sort((a,b)=>b.pts-a.pts).forEach(p => {
+        const chip=document.createElement('div'); chip.className='player-chip';
+        chip.innerHTML=`<span class="chip-name">${p.name}</span><div style="display:flex;align-items:center;gap:10px;"><span class="chip-pts">${p.pts} PTS</span><button class="chip-del" onclick="removePlayer('${p.name.replace(/'/g,"\\'")}')">✕</button></div>`;
+        list.appendChild(chip);
+      });
+    }
+
+    /* Log */
+    const logEl=document.getElementById('log');
+    logEl.innerHTML='';
+    if (!logs.length) { logEl.innerHTML='<div class="log-item">// No activity yet</div>'; }
+    else { [...logs].reverse().forEach(l=>{ const li=document.createElement('div'); li.className='log-item'+(l.pos?' pos':l.neg?' neg':''); li.textContent=l.msg; logEl.appendChild(li); }); }
+  }
+
+  function addLog(msg,type='') {
+    const now=new Date();
+    const t=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+    logs.push({msg:`[${t}] ${msg}`,pos:type==='pos',neg:type==='neg'});
+    if (logs.length>50) logs.shift();
+  }
+
+  /* ─── ACTIONS ─── */
+  async function addPlayer() {
+    const name=document.getElementById('new-name').value.trim();
+    const pts=parseInt(document.getElementById('new-pts').value)||0;
+    if (!name) { toast('⚠ Enter a player name','err'); return; }
+    const players=await getPlayers();
+    if (players.find(p=>p.name.toLowerCase()===name.toLowerCase())) { toast('⚠ Player already exists','err'); return; }
+    players.push({name,pts});
+    await savePlayers(players);
+    document.getElementById('new-name').value='';
+    document.getElementById('new-pts').value='0';
+    addLog(`Added: ${name} (${pts} pts)`,'pos');
+    await render();
+    toast(`✓ ${name} added`);
+  }
+
+  async function quickAward(n) {
+    const name=document.getElementById('qa-select').value;
+    if (!name) { toast('⚠ Select a player first','err'); return; }
+    const players=await getPlayers();
+    const p=players.find(pl=>pl.name===name);
+    if (!p) return;
+    const before=p.pts;
+    p.pts=Math.max(0,p.pts+n);
+    await savePlayers(players);
+    const sign=n>0?'+':'';
+    addLog(`${name}: ${sign}${n} pts (${before}→${p.pts})`,n>0?'pos':'neg');
+    await render();
+    toast(`${sign}${n} pts → ${name}`);
+  }
+
+  async function setPoints() {
+    const name=document.getElementById('set-player').value;
+    const pts=parseInt(document.getElementById('set-pts').value);
+    if (!name) { toast('⚠ Select a player','err'); return; }
+    if (isNaN(pts)||pts<0) { toast('⚠ Enter valid points','err'); return; }
+    const players=await getPlayers();
+    const p=players.find(pl=>pl.name===name);
+    if (!p) return;
+    const before=p.pts; p.pts=pts;
+    await savePlayers(players);
+    addLog(`${name}: set to ${pts} (was ${before})`);
+    document.getElementById('set-pts').value='';
+    await render();
+    toast(`✓ ${name} → ${pts} pts`);
+  }
+
+  async function removePlayer(name) {
+    if (!confirm(`Remove ${name}?`)) return;
+    const players=(await getPlayers()).filter(p=>p.name!==name);
+    await savePlayers(players);
+    addLog(`Removed: ${name}`,'neg');
+    await render();
+    toast(`✓ ${name} removed`);
+  }
+
+  async function resetAll() {
+    if (!confirm('Reset ALL scores to 0?')) return;
+    const players=(await getPlayers()).map(p=>({...p,pts:0}));
+    await savePlayers(players);
+    addLog('All scores reset to 0','neg');
+    await render();
+    toast('✓ All scores reset');
+  }
+
+  async function clearAll() {
+    if (!confirm('DELETE all players? Cannot be undone.')) return;
+    await savePlayers([]);
+    addLog('All players cleared','neg');
+    await render();
+    toast('✓ All players cleared');
+  }
+
+  function toast(msg,type='') {
+    const t=document.getElementById('toast');
+    t.textContent=msg;
+    t.className='toast show'+(type==='err'?' err':'');
+    setTimeout(()=>t.classList.remove('show'),2500);
+  }
+
+  /* ─── INIT ─── */
+  render();
+  setInterval(render,3000);
+
+  document.getElementById('new-name').addEventListener('keydown',e=>{if(e.key==='Enter')addPlayer();});
+  document.getElementById('new-pts').addEventListener('keydown',e=>{if(e.key==='Enter')addPlayer();});
+  document.getElementById('set-pts').addEventListener('keydown',e=>{if(e.key==='Enter')setPoints();});
+</script>
+</body>
+</html>
